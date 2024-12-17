@@ -25,14 +25,14 @@ function Navbar() {
               <Link to="/dashboard" className="text-white mr-4 hover:text-gray-300">
                 Dashboard
               </Link>
+              <button onClick={handleLogout} className="text-white mr-8 hover:text-gray-300">
+                Logout
+              </button>
               {user && (
-                <span className="text-white mr-4">
+                <span className="text-white text-xl">
                   {user.name}
                 </span>
               )}
-              <button onClick={handleLogout} className="text-white hover:text-gray-300">
-                Logout
-              </button>
             </>
           ) : (
             <>
