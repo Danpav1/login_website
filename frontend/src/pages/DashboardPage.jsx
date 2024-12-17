@@ -32,9 +32,11 @@ function DashboardPage() {
   }, [navigate]);
 
   return (
-    <div className="text-center mt-20">
-      <h2 className="text-3xl font-bold mb-4">{message || 'Loading...'}</h2>
-      <p className="text-gray-700">Welcome to your dashboard.</p>
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
+      <div className="p-6 bg-white rounded shadow-md">
+        <h2 className="text-2xl font-bold mb-4 text-center">{message || 'Loading...'}</h2>
+        {/* Optionally, add more dashboard content here */}
+      </div>
     </div>
   );
 }

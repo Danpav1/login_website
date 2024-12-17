@@ -1,0 +1,49 @@
+// frontend/src/components/Navbar.jsx
+import React from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+
+function Navbar() {
+  const navigate = useNavigate();
+  const token = localStorage.getItem('token');
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    navigate('/login');
+  };
+
+  return (
+    <nav className="bg-blue-600 p-4">
+      <div className="container mx-auto flex justify-between">
+        <div>
+          <Link to="/" className="text-white font-bold text-xl">
+            MyProject
+          </Link>
+        </div>
+        <div>
+          {token ? (
+            <>
+              <Link to="/dashboard" className="text-white mr-4 hover:text-gray-300">
+                Dashboard
+              </Link>
+              <button onClick={handleLogout} className="text-white hover:text-gray-300">
+                Logout
+              </button>
+            </>
+          ) : (
+            <>
+              <Link to="/login" className="text-white mr-4 hover:text-gray-300">
+                Login
+              </Link>
+              <Link to="/register" className="text-white hover:text-gray-300">
+                Register
+              </Link>
+            </>
+          )}
+        </div>
+      </div>
+    </nav>
+  );
+}
+
+export default Navbar;
+

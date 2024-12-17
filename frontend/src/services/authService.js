@@ -2,7 +2,8 @@
 import axios from 'axios';
 
 // Base URL for authentication-related API endpoints
-const API_URL = 'http://localhost:10000/api/auth';
+const API_URL = import.meta.env.VITE_API_URL;
+
 
 // Register User
 export const registerUser = async (userData) => {
@@ -10,6 +11,7 @@ export const registerUser = async (userData) => {
     const response = await axios.post(`${API_URL}/register`, userData);
     return response.data;
   } catch (error) {
+    // Extract error message from response
     throw error.response.data;
   }
 };
@@ -20,6 +22,7 @@ export const loginUser = async (credentials) => {
     const response = await axios.post(`${API_URL}/login`, credentials);
     return response.data;
   } catch (error) {
+    // Extract error message from response
     throw error.response.data;
   }
 };
