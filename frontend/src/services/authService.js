@@ -2,8 +2,7 @@
 import axios from 'axios';
 
 // Base URL for authentication-related API endpoints
-const API_URL = import.meta.env.VITE_API_URL;
-
+const API_URL = 'http://localhost:10000/api/auth';
 
 // Register User
 export const registerUser = async (userData) => {

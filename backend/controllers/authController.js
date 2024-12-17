@@ -1,12 +1,12 @@
 // backend/controllers/authController.js
-const User = require('../models/User');
-const Joi = require('joi');
-const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+const Joi = require('joi');
+const User = require('../models/User');
 
-// Validation Schemas
+// Validation schemas using Joi
 const registerSchema = Joi.object({
-  name: Joi.string().min(1).required(),
+  name: Joi.string().min(3).max(30).required(),
   email: Joi.string().email().required(),
   password: Joi.string().min(6).required(),
 });
@@ -16,80 +16,93 @@ const loginSchema = Joi.object({
   password: Joi.string().required(),
 });
 
-// Register User
-exports.register = async (req, res, next) => {
+// Register Controller
+exports.register = async (req, res) => {
+  // Validate request body
   const { error } = registerSchema.validate(req.body);
-  if (error) {
-    return res.status(400).json({ message: error.details[0].message });
-  }
+  if (error) return res.status(400).json({ message: error.details[0].message });
 
   const { name, email, password } = req.body;
 
   try {
     // Check if user already exists
-    let user = await User.findOne({ where: { email } });
-    if (user) {
+    const existingUser = await User.findOne({ where: { email } });
+    if (existingUser)
       return res.status(400).json({ message: 'User already exists' });
-    }
 
-    // Create new user
-    user = await User.create({ name, email, password });
+    // Hash password
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create JWT payload
-    const payload = { id: user.id };
+    // Create user
+    const user = await User.create({
+      name,
+      email,
+      password: hashedPassword,
+    });
 
-    // Sign token
-    jwt.sign(
-      payload,
-      process.env.JWT_SECRET,
-      { expiresIn: '1d' },
-      (err, token) => {
-        if (err) throw err;
-        res.status(201).json({ token });
-      }
-    );
+    // Create JWT
+    const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
+      expiresIn: '1d',
+    });
+
+    res.status(201).json({
+      token,
+      user: {
+        name: user.name,
+        email: user.email,
+      },
+    });
   } catch (err) {
-    next(err);
+    console.error('Registration error:', err);
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
-// Login User
-exports.login = async (req, res, next) => {
+// Login Controller
+exports.login = async (req, res) => {
+  // Validate request body
   const { error } = loginSchema.validate(req.body);
-  if (error) {
-    return res.status(400).json({ message: error.details[0].message });
-  }
+  if (error) return res.status(400).json({ message: error.details[0].message });
 
   const { email, password } = req.body;
 
   try {
-    // Find user
+    // Find user by email
     const user = await User.findOne({ where: { email } });
-    if (!user) {
-      return res.status(400).json({ message: 'Invalid Credentials' });
-    }
+    if (!user)
+      return res.status(400).json({ message: 'Invalid credentials' });
 
     // Compare passwords
     const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
-      return res.status(400).json({ message: 'Invalid Credentials' });
-    }
+    if (!isMatch)
+      return res.status(400).json({ message: 'Invalid credentials' });
 
-    // Create JWT payload
-    const payload = { id: user.id };
+    // Create JWT
+    const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
+      expiresIn: '1d',
+    });
 
-    // Sign token
-    jwt.sign(
-      payload,
-      process.env.JWT_SECRET,
-      { expiresIn: '1d' },
-      (err, token) => {
-        if (err) throw err;
-        res.status(200).json({ token });
-      }
-    );
+    res.json({
+      token,
+      user: {
+        name: user.name,
+        email: user.email,
+      },
+    });
   } catch (err) {
-    next(err);
+    console.error('Login error:', err);
+    res.status(500).json({ message: 'Server error' });
   }
+};
+
+// Dashboard Controller
+exports.dashboard = (req, res) => {
+  res.json({
+    message: 'You have logged in!',
+    user: {
+      name: req.user.name,
+      email: req.user.email,
+    },
+  });
 };
 

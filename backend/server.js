@@ -11,7 +11,7 @@ const app = express();
 
 // Middleware
 app.use(cors({
-  origin: 'http://localhost:5173', // React frontend address
+  origin: 'http://localhost:5173', // Frontend address and port
   methods: ['GET', 'POST'],
 }));
 app.use(express.json());
