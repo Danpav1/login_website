@@ -1,4 +1,3 @@
-// frontend/src/pages/DashboardPage.jsx
 import React, { useEffect, useState, useContext } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
@@ -68,4 +67,3 @@ function DashboardPage() {
 }
 
 export default DashboardPage;
-

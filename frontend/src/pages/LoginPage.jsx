@@ -1,4 +1,3 @@
-// frontend/src/pages/LoginPage.jsx
 import React, { useState, useContext } from 'react';
 import { loginUser } from '../services/authService';
 import { useNavigate, Link } from 'react-router-dom';

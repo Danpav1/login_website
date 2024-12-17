@@ -1,4 +1,3 @@
-// frontend/src/services/authService.js
 import axios from 'axios';
 
 // Base URL for authentication-related API endpoints

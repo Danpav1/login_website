@@ -1,4 +1,3 @@
-// frontend/src/pages/RegisterPage.jsx
 import React, { useState, useContext } from 'react';
 import { registerUser } from '../services/authService';
 import { useNavigate, Link } from 'react-router-dom';
