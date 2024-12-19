@@ -1,37 +1,58 @@
+// src/contexts/AuthContext.jsx
 import React, { createContext, useState, useEffect } from 'react';
 import axios from 'axios';
+// import jwt_decode from 'jwt-decode'; // Remove this import
 
-// Create the AuthContext with default values
 export const AuthContext = createContext({
   token: null,
   user: null,
+  loading: true,
   login: (token, user) => {},
   logout: () => {},
 });
 
-// AuthProvider component to wrap around the app
 export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(() => localStorage.getItem('token'));
   const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  // Function to handle login
   const login = (token, userData) => {
     setToken(token);
     setUser(userData);
     localStorage.setItem('token', token);
   };
 
-  // Function to handle logout
   const logout = () => {
     setToken(null);
     setUser(null);
     localStorage.removeItem('token');
   };
 
-  // Fetch user data when token changes
+  // Remove the isTokenExpired function
+  /*
+  const isTokenExpired = (token) => {
+    try {
+      const decoded = jwt_decode(token);
+      const currentTime = Date.now() / 1000;
+      return decoded.exp < currentTime;
+    } catch (error) {
+      return true;
+    }
+  };
+  */
+
   useEffect(() => {
     const fetchUser = async () => {
       if (token) {
+        // Remove token expiry check
+        /*
+        if (isTokenExpired(token)) {
+          console.warn('Token has expired');
+          logout();
+          setLoading(false);
+          return;
+        }
+        */
         try {
           const response = await axios.get('http://localhost:10000/api/auth/dashboard', {
             headers: {
@@ -44,12 +65,12 @@ export const AuthProvider = ({ children }) => {
           logout();
         }
       }
+      setLoading(false);
     };
 
     fetchUser();
   }, [token]);
 
-  // Listen to storage changes (for multi-tab synchronization)
   useEffect(() => {
     const handleStorageChange = (event) => {
       if (event.key === 'token') {
@@ -68,7 +89,7 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ token, user, login, logout }}>
+    <AuthContext.Provider value={{ token, user, loading, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

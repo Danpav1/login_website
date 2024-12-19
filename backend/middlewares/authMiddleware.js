@@ -1,32 +1,34 @@
+// src/middlewares/authMiddleware.js
 const jwt = require('jsonwebtoken');
-const User = require('../models/User');
+const User = require('../models/User'); // Adjust the path as necessary
 
 const authenticate = async (req, res, next) => {
   const authHeader = req.headers.authorization;
 
-  if (authHeader && authHeader.startsWith('Bearer ')) {
-    const token = authHeader.split(' ')[1];
+  // Check if the Authorization header is present and starts with 'Bearer '
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return res.status(401).json({ message: 'Unauthorized: No token provided' });
+  }
 
-    try {
-      // Verify token
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+  const token = authHeader.split(' ')[1];
 
-      // Find user by ID
-      const user = await User.findByPk(decoded.id);
+  try {
+    // Verify the token using the secret key
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-      if (!user) {
-        return res.status(401).json({ message: 'Unauthorized: User not found' });
-      }
+    // Retrieve the user from the database using the decoded token's ID
+    const user = await User.findByPk(decoded.id);
 
-      // Attach user to request object
-      req.user = user;
-      next();
-    } catch (error) {
-      console.error('Authentication error:', error);
-      res.status(401).json({ message: 'Unauthorized: Invalid token' });
+    if (!user) {
+      return res.status(401).json({ message: 'Unauthorized: User not found' });
     }
-  } else {
-    res.status(401).json({ message: 'Unauthorized: No token provided' });
+
+    // Attach the user object to the request for downstream use
+    req.user = user;
+    next();
+  } catch (error) {
+    console.error('Authentication error:', error);
+    res.status(401).json({ message: 'Unauthorized: Invalid token' });
   }
 };
 

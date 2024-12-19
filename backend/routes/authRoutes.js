@@ -1,3 +1,4 @@
+// src/routes/authRoutes.js
 const express = require('express');
 const router = express.Router();
 const authController = require('../controllers/authController');
@@ -9,6 +10,10 @@ router.post('/login', authController.login);
 
 // Protected Route
 router.get('/dashboard', authenticate, authController.dashboard);
+
+// Additional Protected Routes (if any) should use the 'authenticate' middleware
+// Example:
+// router.get('/profile', authenticate, authController.profile);
 
 module.exports = router;
 
