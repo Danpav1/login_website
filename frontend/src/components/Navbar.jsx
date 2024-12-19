@@ -49,7 +49,7 @@ const Navbar = () => {
         {/* Left Section: Logo */}
         <div className="flex-1">
           <Link to="/" className="text-xl font-bold">
-            MyApp
+            User Authentication App
           </Link>
         </div>
 

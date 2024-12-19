@@ -16,7 +16,7 @@ const HomePage = () => {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 px-4">
-      <h1 className="text-4xl font-bold mb-4">Welcome to MyApp</h1>
+      <h1 className="text-4xl font-bold mb-4">Welcome to my User Authentication App</h1>
       <p className="text-lg mb-6 text-center">
         Please login or register to continue.
       </p>
