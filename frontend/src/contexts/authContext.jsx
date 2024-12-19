@@ -1,13 +1,13 @@
 // src/contexts/AuthContext.jsx
 import React, { createContext, useState, useEffect } from 'react';
 import axios from 'axios';
-// import jwt_decode from 'jwt-decode'; // Remove this import
 
 export const AuthContext = createContext({
   token: null,
   user: null,
   loading: true,
-  login: (token, user) => {},
+  login: async (credentials) => {},
+  register: async (userData) => {},
   logout: () => {},
 });
 
@@ -16,10 +16,28 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  const login = (token, userData) => {
-    setToken(token);
-    setUser(userData);
-    localStorage.setItem('token', token);
+  const login = async (credentials) => {
+    try {
+      const response = await axios.post('http://localhost:10000/api/auth/login', credentials);
+      const { token, user } = response.data;
+      setToken(token);
+      setUser(user);
+      localStorage.setItem('token', token);
+    } catch (error) {
+      throw error; // Let the component handle the error
+    }
+  };
+
+  const register = async (userData) => {
+    try {
+      const response = await axios.post('http://localhost:10000/api/auth/register', userData);
+      const { token, user } = response.data;
+      setToken(token);
+      setUser(user);
+      localStorage.setItem('token', token);
+    } catch (error) {
+      throw error; // Let the component handle the error
+    }
   };
 
   const logout = () => {
@@ -28,31 +46,9 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem('token');
   };
 
-  // Remove the isTokenExpired function
-  /*
-  const isTokenExpired = (token) => {
-    try {
-      const decoded = jwt_decode(token);
-      const currentTime = Date.now() / 1000;
-      return decoded.exp < currentTime;
-    } catch (error) {
-      return true;
-    }
-  };
-  */
-
   useEffect(() => {
     const fetchUser = async () => {
       if (token) {
-        // Remove token expiry check
-        /*
-        if (isTokenExpired(token)) {
-          console.warn('Token has expired');
-          logout();
-          setLoading(false);
-          return;
-        }
-        */
         try {
           const response = await axios.get('http://localhost:10000/api/auth/dashboard', {
             headers: {
@@ -89,7 +85,7 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ token, user, loading, login, logout }}>
+    <AuthContext.Provider value={{ token, user, loading, login, register, logout }}>
       {children}
     </AuthContext.Provider>
   );

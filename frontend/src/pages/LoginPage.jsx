@@ -1,67 +1,124 @@
-import React, { useState, useContext } from 'react';
-import { loginUser } from '../services/authService';
-import { useNavigate, Link } from 'react-router-dom';
+// src/pages/LoginPage.jsx
+import React, { useContext, useState } from 'react';
+import { Formik, Form, Field, ErrorMessage } from 'formik';
 import { AuthContext } from '../contexts/AuthContext';
+import * as Yup from 'yup';
+import { useNavigate, Link } from 'react-router-dom';
 
-function LoginPage() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-
-  const navigate = useNavigate();
+const LoginPage = () => {
   const { login } = useContext(AuthContext);
+  const navigate = useNavigate();
+  const [serverError, setServerError] = useState('');
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError('');
+  // Validation schema using Yup
+  const validationSchema = Yup.object({
+    email: Yup.string()
+      .email('Invalid email address')
+      .required('Email is required'),
+    password: Yup.string()
+      .required('Password is required'),
+  });
 
+  // Initial form values
+  const initialValues = {
+    email: '',
+    password: '',
+  };
+
+  // Form submission handler
+  const onSubmit = async (values, { setSubmitting }) => {
+    setServerError('');
+    const { email, password } = values;
     try {
-      const data = await loginUser({ email, password });
-      // data should contain token and user info
-      login(data.token, data.user); // Update context with token and user
-      navigate('/dashboard');
-    } catch (err) {
-      setError(err.message || 'Login failed');
+      await login({ email, password });
+      navigate('/dashboard'); // Redirect to dashboard upon successful login
+    } catch (error) {
+      if (error.response && error.response.data && error.response.data.message) {
+        setServerError(error.response.data.message);
+      } else {
+        setServerError('An unexpected error occurred. Please try again.');
+      }
     }
+    setSubmitting(false);
   };
 
   return (
-    <div className="max-w-md mx-auto mt-10 p-6 bg-white rounded shadow">
-      <h2 className="text-2xl font-bold mb-4 text-center">Login</h2>
+    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+      <div className="w-full max-w-md bg-white p-8 rounded shadow">
+        <h2 className="text-2xl font-bold mb-6 text-center">Login</h2>
+        {serverError && (
+          <div className="mb-4 text-red-500 text-center">
+            {serverError}
+          </div>
+        )}
+        <Formik
+          initialValues={initialValues}
+          validationSchema={validationSchema}
+          onSubmit={onSubmit}
+        >
+          {({ isSubmitting }) => (
+            <Form>
+              {/* Email Field */}
+              <div className="mb-4">
+                <label htmlFor="email" className="block text-gray-700">
+                  Email
+                </label>
+                <Field
+                  type="email"
+                  name="email"
+                  id="email"
+                  className="mt-1 p-2 w-full border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+                <ErrorMessage
+                  name="email"
+                  component="div"
+                  className="text-red-500 text-sm mt-1"
+                />
+              </div>
 
-      {error && <p className="text-red-500 mb-4 text-center">{error}</p>}
+              {/* Password Field */}
+              <div className="mb-6">
+                <label htmlFor="password" className="block text-gray-700">
+                  Password
+                </label>
+                <Field
+                  type="password"
+                  name="password"
+                  id="password"
+                  className="mt-1 p-2 w-full border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+                <ErrorMessage
+                  name="password"
+                  component="div"
+                  className="text-red-500 text-sm mt-1"
+                />
+              </div>
 
-      <form onSubmit={handleSubmit} className="flex flex-col">
-        <input
-          type="email"
-          placeholder="Email"
-          className="mb-2 p-2 border rounded"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          className="mb-4 p-2 border rounded"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-        <button type="submit" className="p-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">
-          Login
-        </button>
-      </form>
-
-      <p className="mt-4 text-center">
-        Don't have an account?{' '}
-        <Link to="/register" className="text-blue-600 hover:underline">
-          Register here
-        </Link>
-      </p>
+              {/* Submit Button */}
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className={`w-full p-2 text-white rounded ${
+                  isSubmitting
+                    ? 'bg-blue-300 cursor-not-allowed'
+                    : 'bg-blue-500 hover:bg-blue-600'
+                }`}
+              >
+                {isSubmitting ? 'Logging in...' : 'Login'}
+              </button>
+            </Form>
+          )}
+        </Formik>
+        <p className="mt-4 text-center text-gray-600">
+          Don't have an account?{' '}
+          <Link to="/register" className="text-blue-500 hover:underline">
+            Register
+          </Link>
+        </p>
+      </div>
     </div>
   );
-}
+};
 
 export default LoginPage;
 
