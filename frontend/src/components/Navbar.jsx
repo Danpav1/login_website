@@ -44,7 +44,7 @@ const Navbar = () => {
   }, []);
 
   return (
-    <nav className="bg-blue-600 text-white px-6 py-4">
+    <nav className="bg-indigo-600 text-white px-6 py-4">
       <div className="container mx-auto flex items-center justify-between relative">
         {/* Left Section: Logo */}
         <div className="flex-1">
@@ -106,13 +106,13 @@ const Navbar = () => {
             <>
               <Link
                 to="/login"
-                className="hover:bg-blue-700 px-3 py-2 rounded"
+                className="hover:bg-indigo-700 px-3 py-2 rounded"
               >
                 Login
               </Link>
               <Link
                 to="/register"
-                className="hover:bg-blue-700 px-3 py-2 rounded"
+                className="hover:bg-indigo-700 px-3 py-2 rounded"
               >
                 Register
               </Link>

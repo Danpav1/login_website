@@ -147,7 +147,7 @@ const RegisterPage = () => {
                 className={`w-full p-2 text-white rounded ${
                   isSubmitting
                     ? 'bg-blue-300 cursor-not-allowed'
-                    : 'bg-blue-500 hover:bg-blue-600'
+                    : 'bg-indigo-600 hover:bg-indigo-700'
                 }`}
               >
                 {isSubmitting ? 'Registering...' : 'Register'}

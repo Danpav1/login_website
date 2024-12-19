@@ -1,9 +1,15 @@
-const User = require('../models/User');
+const User = require('../models/User'); // Adjust path if needed
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const transporter = require('../config/email');
 const { Op } = require('sequelize');
 
+/**
+ * Registers a new user.
+ * 
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ */
 exports.register = async (req, res) => {
   const { name, email, password } = req.body;
 
@@ -13,9 +19,7 @@ exports.register = async (req, res) => {
       return res.status(400).json({ message: 'Please provide name, email, and password' });
     }
 
-    // Normalize email to ensure consistency
     const normalizedEmail = email.toLowerCase().trim();
-
     let user = await User.findOne({ where: { email: normalizedEmail } });
     if (user) {
       return res.status(400).json({ message: 'User already exists' });
@@ -50,8 +54,15 @@ exports.register = async (req, res) => {
   }
 };
 
+/**
+ * Logs in an existing user.
+ * 
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ */
 exports.login = async (req, res) => {
   const { email, password } = req.body;
+
   try {
     console.log('Login request data:', req.body);
     if (!email || !password) {
@@ -77,7 +88,11 @@ exports.login = async (req, res) => {
 
     res.json({
       token,
-      user: { id: user.id, name: user.name, email: user.email },
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+      },
     });
   } catch (error) {
     console.error('Login error:', error);
@@ -85,13 +100,23 @@ exports.login = async (req, res) => {
   }
 };
 
+/**
+ * Retrieves dashboard data for authenticated users.
+ * 
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ */
 exports.dashboard = async (req, res) => {
   try {
     console.log('Dashboard request by user ID:', req.user.id);
     const user = req.user;
     res.json({
       message: `Welcome to your dashboard, ${user.name}!`,
-      user: { id: user.id, name: user.name, email: user.email },
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+      },
     });
   } catch (error) {
     console.error('Dashboard error:', error);
@@ -99,8 +124,15 @@ exports.dashboard = async (req, res) => {
   }
 };
 
+/**
+ * Handles forgot password requests with OTP.
+ * 
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ */
 exports.forgotPassword = async (req, res) => {
   const { email } = req.body;
+
   try {
     console.log('Forgot Password request data:', req.body);
     if (!email) {
@@ -110,13 +142,10 @@ exports.forgotPassword = async (req, res) => {
     const normalizedEmail = email.toLowerCase().trim();
     console.log('Normalized email being searched:', normalizedEmail);
 
-    // Debug: Log all users to see what exists
-    const allUsers = await User.findAll();
-    console.log('All Users in DB:', allUsers.map(u => ({ id: u.id, email: u.email })));
-
     const user = await User.findOne({ where: { email: normalizedEmail } });
     if (!user) {
       console.log('No user found with email:', normalizedEmail);
+      // For security, don't reveal whether the email exists
       return res.status(200).json({ message: 'If that email is registered, an OTP has been sent.' });
     }
 
@@ -146,6 +175,13 @@ exports.forgotPassword = async (req, res) => {
   }
 };
 
+/**
+ * Handles password reset using the OTP.
+ * Ensures new password is at least 6 chars, and not the same as the old password.
+ * 
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ */
 exports.resetPassword = async (req, res) => {
   const { email, otp, newPassword } = req.body;
 
@@ -155,17 +191,29 @@ exports.resetPassword = async (req, res) => {
       return res.status(400).json({ message: 'Invalid request' });
     }
 
+    if (newPassword.length < 6) {
+      return res.status(400).json({ message: 'New password must be at least 6 characters long.' });
+    }
+
     const normalizedEmail = email.toLowerCase().trim();
     const user = await User.findOne({
       where: {
         email: normalizedEmail,
         resetOTP: otp,
-        resetOTPExpires: { [Op.gt]: Date.now() },
+        resetOTPExpires: {
+          [Op.gt]: Date.now(),
+        },
       },
     });
 
     if (!user) {
       return res.status(400).json({ message: 'Invalid or expired OTP' });
+    }
+
+    // Check if new password is the same as old password
+    const isSamePassword = await bcrypt.compare(newPassword, user.password);
+    if (isSamePassword) {
+      return res.status(400).json({ message: 'New password cannot be the same as the old password.' });
     }
 
     const saltRounds = 10;
@@ -177,7 +225,7 @@ exports.resetPassword = async (req, res) => {
     await user.save();
 
     const mailOptions = {
-      from: `"Danpav1 - User Auth. Project" <${process.env.EMAIL_FROM}>`,
+      from: `"Danpav1 - User Auth. App" <${process.env.EMAIL_FROM}>`,
       to: user.email,
       subject: 'Your Password Has Been Reset',
       text: `Hello,\n\nThis is a confirmation that the password for your account ${user.email} has just been changed.\n`,
