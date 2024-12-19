@@ -1,7 +1,7 @@
 // src/pages/HomePage.jsx
 import React, { useContext, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { AuthContext } from '../contexts/AuthContext';
+import { AuthContext } from '../contexts/authContext';
 
 const HomePage = () => {
   const { token } = useContext(AuthContext);

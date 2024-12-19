@@ -1,7 +1,7 @@
 // src/pages/RegisterPage.jsx
 import React, { useContext, useState } from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
-import { AuthContext } from '../contexts/AuthContext';
+import { AuthContext } from '../contexts/authContext';
 import * as Yup from 'yup';
 import { useNavigate, Link } from 'react-router-dom';
 

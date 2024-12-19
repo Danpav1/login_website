@@ -2,18 +2,23 @@
 const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
-const { connectDB, sequelize } = require('./config/db');
+const { connectDB, sequelize } = require('./config/database');
 const authRoutes = require('./routes/authRoutes');
+const User = require('./models/User'); // Import the User model
 
 dotenv.config();
 
 const app = express();
 
-// Middleware
+// CORS Configuration
 app.use(cors({
-  origin: 'http://localhost:5173', // Frontend address and port
-  methods: ['GET', 'POST'],
+  origin: process.env.FRONTEND_URL || 'http://localhost:5173', // Frontend address and port
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true, // If you need to send cookies or other credentials
 }));
+
+// Middleware
 app.use(express.json());
 
 // Routes
@@ -32,6 +37,7 @@ const startServer = async () => {
 
     // Sync models (create tables if they don't exist)
     await sequelize.sync({ alter: true });
+    console.log('Database synchronized.');
 
     const PORT = process.env.PORT || 10000;
     const server = app.listen(PORT, () => {
@@ -79,4 +85,3 @@ const startServer = async () => {
 };
 
 startServer();
-

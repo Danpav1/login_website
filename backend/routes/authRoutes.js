@@ -4,17 +4,19 @@ const router = express.Router();
 const authController = require('../controllers/authController');
 const authenticate = require('../middlewares/authMiddleware');
 
-// Public Routes
+// Registration Route
 router.post('/register', authController.register);
-router.post('/login', authController.login);
-router.post('/home')
 
-// Protected Route
+// Login Route
+router.post('/login', authController.login);
+
+// Dashboard Route (Protected)
 router.get('/dashboard', authenticate, authController.dashboard);
 
-// Additional Protected Routes (if any) should use the 'authenticate' middleware
-// Example:
-// router.get('/profile', authenticate, authController.profile);
+// Forgot Password Route
+router.post('/forgot-password', authController.forgotPassword);
+
+// Reset Password Route
+router.post('/reset-password', authController.resetPassword);
 
 module.exports = router;
-

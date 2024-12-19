@@ -1,7 +1,7 @@
 // src/pages/LoginPage.jsx
 import React, { useContext, useState, useEffect } from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
-import { AuthContext } from '../contexts/AuthContext';
+import { AuthContext } from '../contexts/authContext';
 import * as Yup from 'yup';
 import { useNavigate, Link } from 'react-router-dom';
 
@@ -115,16 +115,24 @@ const LoginPage = () => {
             </Form>
           )}
         </Formik>
-        <p className="mt-4 text-center text-gray-600">
-          Don't have an account?{' '}
-          <Link to="/register" className="text-blue-500 hover:underline">
-            Register
+        <div className="mt-4 flex flex-col items-center">
+          <p className="text-center text-gray-600">
+            Don't have an account?{' '}
+            <Link to="/register" className="text-blue-500 hover:underline">
+              Register
+            </Link>
+          </p>
+          {/* Forgot Password Link */}
+          <Link
+            to="/forgot-password"
+            className="mt-2 text-blue-500 hover:underline text-sm"
+          >
+            Forgot Password?
           </Link>
-        </p>
+        </div>
       </div>
     </div>
   );
 };
 
 export default LoginPage;
-
