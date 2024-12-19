@@ -2,6 +2,7 @@
 import React, { Suspense, lazy } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
+import Footer from './components/Footer'; // Import the Footer
 import { AuthProvider } from './contexts/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import LoadingSpinner from './components/LoadingSpinner';
@@ -51,10 +52,10 @@ function App() {
             </Routes>
           </Suspense>
         </div>
+        <Footer />
       </Router>
     </AuthProvider>
   );
 }
 
 export default App;
-
