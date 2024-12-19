@@ -1,14 +1,20 @@
 // src/pages/LoginPage.jsx
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import { AuthContext } from '../contexts/AuthContext';
 import * as Yup from 'yup';
 import { useNavigate, Link } from 'react-router-dom';
 
 const LoginPage = () => {
-  const { login } = useContext(AuthContext);
+  const { login, token } = useContext(AuthContext);
   const navigate = useNavigate();
   const [serverError, setServerError] = useState('');
+
+  useEffect(() => {
+    if (token) {
+      navigate('/dashboard');
+    }
+  }, [token, navigate]);
 
   // Validation schema using Yup
   const validationSchema = Yup.object({

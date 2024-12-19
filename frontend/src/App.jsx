@@ -2,12 +2,13 @@
 import React, { Suspense, lazy } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
-import Footer from './components/Footer'; // Import the Footer
+import Footer from './components/Footer'; // Assuming you have a Footer
 import { AuthProvider } from './contexts/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import LoadingSpinner from './components/LoadingSpinner';
 
 // Lazy-loaded pages for code splitting
+const HomePage = lazy(() => import('./pages/HomePage'));
 const LoginPage = lazy(() => import('./pages/LoginPage'));
 const RegisterPage = lazy(() => import('./pages/RegisterPage'));
 const DashboardPage = lazy(() => import('./pages/DashboardPage'));
@@ -21,15 +22,8 @@ function App() {
         <div className="container mx-auto p-4">
           <Suspense fallback={<LoadingSpinner />}>
             <Routes>
-              {/* Default Route: Redirect based on authentication status */}
-              <Route
-                path="/"
-                element={
-                  <ProtectedRoute>
-                    <DashboardPage />
-                  </ProtectedRoute>
-                }
-              />
+              {/* Home Page Route */}
+              <Route path="/" element={<HomePage />} />
 
               {/* Login Route */}
               <Route path="/login" element={<LoginPage />} />
@@ -37,7 +31,7 @@ function App() {
               {/* Register Route */}
               <Route path="/register" element={<RegisterPage />} />
 
-              {/* Dashboard Route */}
+              {/* Dashboard Route (Protected) */}
               <Route
                 path="/dashboard"
                 element={
@@ -52,7 +46,7 @@ function App() {
             </Routes>
           </Suspense>
         </div>
-        <Footer />
+        <Footer /> {/* Add Footer below the Routes */}
       </Router>
     </AuthProvider>
   );
