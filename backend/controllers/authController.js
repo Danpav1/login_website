@@ -157,7 +157,7 @@ exports.forgotPassword = async (req, res) => {
     await user.save();
 
     const mailOptions = {
-      from: `"Your App Name" <${process.env.EMAIL_FROM}>`,
+      from: `"Danpav1 - User Authentication App" <${process.env.EMAIL_FROM}>`,
       to: user.email,
       subject: 'Password Reset OTP',
       text: `You requested a password reset. Your OTP is: ${otp}. It is valid for 10 minutes.`,
@@ -225,7 +225,7 @@ exports.resetPassword = async (req, res) => {
     await user.save();
 
     const mailOptions = {
-      from: `"Danpav1 - User Auth. App" <${process.env.EMAIL_FROM}>`,
+      from: `"Danpav1 - User Authentication App" <${process.env.EMAIL_FROM}>`,
       to: user.email,
       subject: 'Your Password Has Been Reset',
       text: `Hello,\n\nThis is a confirmation that the password for your account ${user.email} has just been changed.\n`,
