@@ -103,7 +103,7 @@ const LoginPage = () => {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className={`w-full p-2 text-white rounded ${
+                className={`w-full p-2 text-white rounded shadow-2xl ${
                   isSubmitting
                     ? 'bg-sky-300 cursor-not-allowed'
                     : 'bg-sky-500 hover:bg-sky-600'

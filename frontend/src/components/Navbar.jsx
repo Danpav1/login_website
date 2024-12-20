@@ -2,6 +2,10 @@ import React, { useContext, useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { AuthContext } from '../contexts/authContext';
 
+// Font Awesome Imports
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faGithub } from '@fortawesome/free-brands-svg-icons';
+
 const Navbar = () => {
   const { token, user, logout } = useContext(AuthContext);
   const location = useLocation();
@@ -40,8 +44,8 @@ const Navbar = () => {
           </Link>
         </div>
 
-        {/* Right Section: Auth Links or Username Dropdown */}
-        <div className="flex-1 flex justify-end space-x-4 items-center text-slate-100">
+        {/* Right Section: Auth Links / Username Dropdown + Divider + GitHub Icon */}
+        <div className="flex-1 flex justify-end items-center space-x-4 text-slate-100">
           {token ? (
             /* Username Dropdown */
             <div className="relative" ref={dropdownRef}>
@@ -100,6 +104,19 @@ const Navbar = () => {
               </Link>
             </>
           )}
+
+          {/* Vertical Divider */}
+          <div className="border-l border-gray-500 h-6"></div>
+
+          {/* GitHub Icon Link */}
+          <a
+            href="https://github.com/Danpav1/login_website"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="ml-4 bg-inherit text-gray-800 p-2 rounded-full group"
+          >
+            <FontAwesomeIcon icon={faGithub} className="text-xl text-slate-100 group-hover:text-sky-500"/>
+          </a>
         </div>
       </div>
     </nav>
