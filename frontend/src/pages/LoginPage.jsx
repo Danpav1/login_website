@@ -4,10 +4,15 @@ import { AuthContext } from '../contexts/authContext';
 import * as Yup from 'yup';
 import { useNavigate, Link } from 'react-router-dom';
 
+// Font Awesome Imports
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
+
 const LoginPage = () => {
   const { login, token } = useContext(AuthContext);
   const navigate = useNavigate();
   const [serverError, setServerError] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const formContainerRef = useRef(null);
 
   useEffect(() => {
@@ -90,17 +95,27 @@ const LoginPage = () => {
                 </div>
               </div>
 
-              {/* Password Field */}
+              {/* Password Field with Icon Button */}
               <div>
                 <label htmlFor="password" className="block text-gray-100 mb-1">
                   Password
                 </label>
-                <Field
-                  type="password"
-                  name="password"
-                  id="password"
-                  className="p-2 w-full border rounded focus:outline-none focus:ring-2 focus:ring-sky-500 bg-slate-200 outline outline-slate-800"
-                />
+                <div className="relative">
+                  <Field
+                    type={showPassword ? 'text' : 'password'}
+                    name="password"
+                    id="password"
+                    className="p-2 w-full border rounded focus:outline-none focus:ring-2 focus:ring-sky-500 bg-slate-200 outline outline-slate-800 pr-10"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((prev) => !prev)}
+                    className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-transparent p-0 m-0 cursor-pointer text-gray-800 hover:text-sky-500 focus:outline-none"
+                    style={{ lineHeight: 0 }} // Ensures no extra space around the icon
+                  >
+                    <FontAwesomeIcon icon={showPassword ? faEye : faEyeSlash} className="w-5 h-5" />
+                  </button>
+                </div>
                 <div className="min-h-[1.25rem] mt-1">
                   <ErrorMessage
                     name="password"

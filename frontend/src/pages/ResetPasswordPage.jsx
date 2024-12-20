@@ -4,6 +4,10 @@ import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 
+// Font Awesome Imports
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
+
 const OTPInput = React.forwardRef(({ index, value, onChange, onPaste, onKeyDown }, ref) => (
   <input
     ref={ref}
@@ -32,7 +36,12 @@ const ResetPasswordPage = () => {
   inputRefs.current = Array.from({ length: 6 }, (_, i) => inputRefs.current[i] || React.createRef());
 
   const passwordRef = useRef(null);
+  const confirmPasswordRef = useRef(null); // Reference for Confirm Password field
   const formContainerRef = useRef(null);
+
+  // Password visibility states
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   useEffect(() => {
     if (formContainerRef.current) {
@@ -154,7 +163,7 @@ const ResetPasswordPage = () => {
       .required('New password is required'),
     confirmPassword: Yup.string()
       .oneOf([Yup.ref('newPassword'), null], 'Passwords must match')
-      .required('Confirm password is required'),
+      .required('Confirm Password is required'),
   });
 
   const initialValues = {
@@ -188,6 +197,9 @@ const ResetPasswordPage = () => {
     }
     setSubmitting(false);
   };
+
+  // Common field classes for uniform input size
+  const fieldClasses = "p-2 w-full border rounded focus:outline-none focus:ring-2 focus:ring-sky-500 bg-slate-200 outline outline-slate-800 pr-10";
 
   return (
     <div className="flex items-start justify-center min-h-screen bg-inherit pt-10 px-4">
@@ -228,18 +240,27 @@ const ResetPasswordPage = () => {
         <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={onSubmit}>
           {({ isSubmitting }) => (
             <Form className="space-y-6">
-              {/* New Password Field */}
+              {/* New Password Field with Visibility Toggle */}
               <div>
                 <label htmlFor="newPassword" className="block text-gray-100 mb-1">
                   New Password
                 </label>
-                <Field
-                  innerRef={passwordRef}
-                  type="password"
-                  name="newPassword"
-                  id="newPassword"
-                  className="p-2 w-full border rounded focus:outline-none focus:ring-2 focus:ring-sky-500 bg-slate-200 outline outline-slate-800"
-                />
+                <div className="relative">
+                  <Field
+                    type={showPassword ? 'text' : 'password'}
+                    name="newPassword"
+                    id="newPassword"
+                    className={fieldClasses}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((prev) => !prev)}
+                    className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-transparent p-0 m-0 cursor-pointer text-gray-800 hover:text-sky-500 focus:outline-none"
+                    style={{ lineHeight: 0 }} // Ensures no extra space around the icon
+                  >
+                    <FontAwesomeIcon icon={showPassword ? faEye : faEyeSlash} className="w-5 h-5" />
+                  </button>
+                </div>
                 <div className="min-h-[1.25rem] mt-1">
                   <ErrorMessage
                     name="newPassword"
@@ -249,17 +270,27 @@ const ResetPasswordPage = () => {
                 </div>
               </div>
 
-              {/* Confirm Password Field */}
+              {/* Confirm Password Field with Visibility Toggle */}
               <div>
                 <label htmlFor="confirmPassword" className="block text-gray-100 mb-1">
                   Confirm Password
                 </label>
-                <Field
-                  type="password"
-                  name="confirmPassword"
-                  id="confirmPassword"
-                  className="p-2 w-full border rounded focus:outline-none focus:ring-2 focus:ring-sky-500 bg-slate-200 outline outline-slate-800"
-                />
+                <div className="relative">
+                  <Field
+                    type={showConfirmPassword ? 'text' : 'password'}
+                    name="confirmPassword"
+                    id="confirmPassword"
+                    className={fieldClasses}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPassword((prev) => !prev)}
+                    className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-transparent p-0 m-0 cursor-pointer text-gray-800 hover:text-sky-500 focus:outline-none"
+                    style={{ lineHeight: 0 }} // Ensures no extra space around the icon
+                  >
+                    <FontAwesomeIcon icon={showConfirmPassword ? faEye : faEyeSlash} className="w-5 h-5" />
+                  </button>
+                </div>
                 <div className="min-h-[1.25rem] mt-1">
                   <ErrorMessage
                     name="confirmPassword"
