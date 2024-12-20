@@ -1,5 +1,4 @@
-// src/pages/ForgotPasswordPage.jsx
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useRef, useEffect } from 'react';
 import { AuthContext } from '../contexts/authContext';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
@@ -10,6 +9,13 @@ const ForgotPasswordPage = () => {
   const [serverError, setServerError] = useState('');
   const [message, setMessage] = useState('');
   const navigate = useNavigate();
+  const formContainerRef = useRef(null);
+
+  useEffect(() => {
+    if (formContainerRef.current) {
+      formContainerRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }, []);
 
   const validationSchema = Yup.object({
     email: Yup.string()
@@ -40,7 +46,10 @@ const ForgotPasswordPage = () => {
 
   return (
     <div className="flex items-start justify-center min-h-screen bg-inherit pt-10 px-4">
-      <div className="w-full max-w-md bg-inherit p-8 rounded shadow-2xl mt-4 space-y-8 outline outline-indigo-900">
+      <div
+        ref={formContainerRef}
+        className="w-full max-w-md bg-inherit p-8 rounded shadow-2xl mt-4 space-y-8 outline outline-indigo-900"
+      >
         <h2 className="text-3xl font-semibold text-center text-gray-100 mb-6">Forgot Password</h2>
 
         {/* Reserved space for server error */}

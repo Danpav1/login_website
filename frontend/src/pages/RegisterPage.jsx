@@ -1,5 +1,4 @@
-// src/pages/RegisterPage.jsx
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useRef, useEffect } from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import { AuthContext } from '../contexts/authContext';
 import * as Yup from 'yup';
@@ -9,6 +8,13 @@ const RegisterPage = () => {
   const { register } = useContext(AuthContext);
   const navigate = useNavigate();
   const [serverError, setServerError] = useState('');
+  const formContainerRef = useRef(null);
+
+  useEffect(() => {
+    if (formContainerRef.current) {
+      formContainerRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }, []);
 
   // Validation schema using Yup
   const validationSchema = Yup.object({
@@ -54,7 +60,10 @@ const RegisterPage = () => {
 
   return (
     <div className="flex items-start justify-center min-h-screen bg-inherit pt-10 px-4">
-      <div className="w-full max-w-md bg-inherit p-8 rounded shadow-2xl mt-4 space-y-8 outline outline-indigo-900">
+      <div
+        ref={formContainerRef}
+        className="w-full max-w-md bg-inherit p-8 rounded shadow-2xl mt-4 space-y-8 outline outline-indigo-900"
+      >
         <h2 className="text-3xl font-semibold text-center text-gray-100 mb-6">Register</h2>
 
         {/* Reserved space for server error */}

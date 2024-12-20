@@ -1,4 +1,3 @@
-// src/pages/ResetPasswordPage.jsx
 import React, { useState, useContext, useEffect, useRef } from 'react';
 import { AuthContext } from '../contexts/authContext';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
@@ -27,16 +26,22 @@ const ResetPasswordPage = () => {
   const [message, setMessage] = useState('');
   const navigate = useNavigate();
   const location = useLocation();
-
+  
   const params = new URLSearchParams(location.search);
   const passedEmail = params.get('email') || '';
 
   const [otpDigits, setOtpDigits] = useState(['', '', '', '', '', '']);
-
   const inputRefs = useRef([]);
   inputRefs.current = Array.from({ length: 6 }, (_, i) => inputRefs.current[i] || React.createRef());
-
+  
   const passwordRef = useRef(null);
+  const formContainerRef = useRef(null);
+
+  useEffect(() => {
+    if (formContainerRef.current) {
+      formContainerRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }, []);
 
   const handleOTPChange = (index, e) => {
     const inputVal = e.target.value;
@@ -126,7 +131,10 @@ const ResetPasswordPage = () => {
 
   return (
     <div className="flex items-start justify-center min-h-screen bg-inherit pt-10 px-4">
-      <div className="w-full max-w-md bg-inherit p-8 rounded shadow-2xl mt-4 space-y-8 outline outline-indigo-900">
+      <div
+        ref={formContainerRef}
+        className="w-full max-w-md bg-inherit p-8 rounded shadow-2xl mt-4 space-y-8 outline outline-indigo-900"
+      >
         <h2 className="text-3xl font-semibold text-center text-gray-100 mb-6">Reset Password</h2>
 
         {message && (
