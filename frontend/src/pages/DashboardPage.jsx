@@ -2,6 +2,7 @@ import React, { useEffect, useState, useContext } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../contexts/authContext';
+import LoadingSpinner from '../components/LoadingSpinner'; // Adjust this path if needed
 
 function DashboardPage() {
   const [message, setMessage] = useState('');
@@ -31,7 +32,6 @@ function DashboardPage() {
         console.error('Error fetching dashboard data:', error);
         setError('Failed to load dashboard. Please try logging in again.');
         setLoading(false);
-        // Optionally, you can also log the user out if token is invalid
       }
     };
 
@@ -40,15 +40,15 @@ function DashboardPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-100">
-        <p className="text-xl">Loading...</p>
+      <div className="flex items-center justify-center min-h-screen bg-inherit">
+        <LoadingSpinner /> 
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-100">
+      <div className="flex items-center justify-center min-h-screen bg-inherit">
         <p className="text-red-500 text-xl">{error}</p>
       </div>
     );
