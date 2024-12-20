@@ -55,11 +55,11 @@ function DashboardPage() {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
-      <div className="p-6 bg-white rounded shadow-md text-center">
-        <h2 className="text-2xl font-bold mb-4">{message}</h2>
-        <p className="text-lg">
-          You have logged in as <span className="font-semibold">{user.name}</span> - <span className="font-semibold">{user.email}</span>
+    <div className="flex flex-col items-center justify-center min-h-screen bg-inherit">
+      <div className="p-6 bg-inherit rounded shadow-2xl outline outline-indigo-900 text-center">
+        <h2 className="text-2xl font-bold mb-4 text-slate-100">{message}</h2>
+        <p className="text-lg text-gray-100">
+          You have logged in as <span className="font-semibold text-slate-200">{user.name}</span> - <span className="font-semibold text-slate-200">{user.email}</span>
         </p>
       </div>
     </div>
