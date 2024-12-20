@@ -8,11 +8,12 @@ import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 
+// OTPInput Component
 const OTPInput = React.forwardRef(({ index, value, onChange, onPaste, onKeyDown }, ref) => (
   <input
     ref={ref}
     type="text"
-    maxLength="6"
+    maxLength="1"
     className="w-12 h-12 border rounded text-center text-xl focus:outline-none focus:ring-2 focus:ring-sky-500"
     value={value}
     onChange={onChange}
@@ -39,9 +40,8 @@ const ResetPasswordPage = () => {
   const confirmPasswordRef = useRef(null); // Reference for Confirm Password field
   const formContainerRef = useRef(null);
 
-  // Password visibility states
+  // Unified Password visibility state
   const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   useEffect(() => {
     if (formContainerRef.current) {
@@ -163,7 +163,7 @@ const ResetPasswordPage = () => {
       .required('New password is required'),
     confirmPassword: Yup.string()
       .oneOf([Yup.ref('newPassword'), null], 'Passwords must match')
-      .required('Confirm Password is required'),
+      .required('Confirm password is required'),
   });
 
   const initialValues = {
@@ -190,6 +190,7 @@ const ResetPasswordPage = () => {
       });
       setMessage(response.message);
       resetForm();
+      setOtpDigits(['', '', '', '', '', '']); // Reset OTP digits
       setTimeout(() => navigate('/login'), 3000);
     } catch (err) {
       console.error('Reset Password error:', err.response);
@@ -256,6 +257,7 @@ const ResetPasswordPage = () => {
                     type="button"
                     onClick={() => setShowPassword((prev) => !prev)}
                     className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-transparent p-0 m-0 cursor-pointer text-gray-800 hover:text-sky-500 focus:outline-none"
+                    aria-label={showPassword ? 'Hide password' : 'Show password'}
                     style={{ lineHeight: 0 }} // Ensures no extra space around the icon
                   >
                     <FontAwesomeIcon icon={showPassword ? faEye : faEyeSlash} className="w-5 h-5" />
@@ -277,18 +279,19 @@ const ResetPasswordPage = () => {
                 </label>
                 <div className="relative">
                   <Field
-                    type={showConfirmPassword ? 'text' : 'password'}
+                    type={showPassword ? 'text' : 'password'}
                     name="confirmPassword"
                     id="confirmPassword"
                     className={fieldClasses}
                   />
                   <button
                     type="button"
-                    onClick={() => setShowConfirmPassword((prev) => !prev)}
+                    onClick={() => setShowPassword((prev) => !prev)}
                     className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-transparent p-0 m-0 cursor-pointer text-gray-800 hover:text-sky-500 focus:outline-none"
+                    aria-label={showPassword ? 'Hide confirm password' : 'Show confirm password'}
                     style={{ lineHeight: 0 }} // Ensures no extra space around the icon
                   >
-                    <FontAwesomeIcon icon={showConfirmPassword ? faEye : faEyeSlash} className="w-5 h-5" />
+                    <FontAwesomeIcon icon={showPassword ? faEye : faEyeSlash} className="w-5 h-5" />
                   </button>
                 </div>
                 <div className="min-h-[1.25rem] mt-1">

@@ -13,7 +13,6 @@ const RegisterPage = () => {
   const navigate = useNavigate();
   const [serverError, setServerError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const formContainerRef = useRef(null);
 
   useEffect(() => {
@@ -65,7 +64,13 @@ const RegisterPage = () => {
   };
 
   // Common field classes for uniform input size
-  const fieldClasses = "p-2 w-full border rounded focus:outline-none focus:ring-2 focus:ring-sky-500 bg-slate-200 outline outline-slate-800 pr-10";
+  const fieldClasses =
+    'p-2 w-full border rounded focus:outline-none focus:ring-2 focus:ring-sky-500 bg-slate-200 outline outline-slate-800 pr-10';
+
+  // Unified toggle handler
+  const toggleShowPassword = () => {
+    setShowPassword((prev) => !prev);
+  };
 
   return (
     <div className="flex items-start justify-center min-h-screen bg-inherit pt-10 px-4">
@@ -79,8 +84,12 @@ const RegisterPage = () => {
         <div className="text-center min-h-[1.5rem]">
           {serverError && <span className="text-red-500">{serverError}</span>}
         </div>
-        
-        <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={onSubmit}>
+
+        <Formik
+          initialValues={initialValues}
+          validationSchema={validationSchema}
+          onSubmit={onSubmit}
+        >
           {({ isSubmitting }) => (
             <Form className="space-y-12">
               <div className="grid grid-cols-[1fr_auto_1fr] gap-12">
@@ -148,9 +157,10 @@ const RegisterPage = () => {
                       />
                       <button
                         type="button"
-                        onClick={() => setShowPassword((prev) => !prev)}
+                        onClick={toggleShowPassword}
                         className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-transparent p-0 m-0 cursor-pointer text-gray-800 hover:text-sky-500 focus:outline-none"
-                        style={{ lineHeight: 0 }}
+                        aria-label={showPassword ? 'Hide password' : 'Show password'}
+                        style={{ lineHeight: 0 }} // Ensures no extra space around the icon
                       >
                         <FontAwesomeIcon icon={showPassword ? faEye : faEyeSlash} className="w-5 h-5" />
                       </button>
@@ -171,18 +181,19 @@ const RegisterPage = () => {
                     </label>
                     <div className="relative">
                       <Field
-                        type={showConfirmPassword ? 'text' : 'password'}
+                        type={showPassword ? 'text' : 'password'}
                         name="confirmPassword"
                         id="confirmPassword"
                         className={fieldClasses}
                       />
                       <button
                         type="button"
-                        onClick={() => setShowConfirmPassword((prev) => !prev)}
+                        onClick={toggleShowPassword}
                         className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-transparent p-0 m-0 cursor-pointer text-gray-800 hover:text-sky-500 focus:outline-none"
-                        style={{ lineHeight: 0 }}
+                        aria-label={showPassword ? 'Hide confirm password' : 'Show confirm password'}
+                        style={{ lineHeight: 0 }} // Ensures no extra space around the icon
                       >
-                        <FontAwesomeIcon icon={showConfirmPassword ? faEye : faEyeSlash} className="w-5 h-5" />
+                        <FontAwesomeIcon icon={showPassword ? faEye : faEyeSlash} className="w-5 h-5" />
                       </button>
                     </div>
                     <div className="min-h-[1.25rem] mt-1">
