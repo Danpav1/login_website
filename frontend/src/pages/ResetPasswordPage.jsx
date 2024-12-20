@@ -4,19 +4,16 @@ import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 
-const OTPInput = React.forwardRef(({ value, onChange, onBackspace }, ref) => (
+const OTPInput = React.forwardRef(({ index, value, onChange, onPaste, onKeyDown }, ref) => (
   <input
     ref={ref}
     type="text"
-    maxLength="1"
+    maxLength="6"
     className="w-12 h-12 border rounded text-center text-xl focus:outline-none focus:ring-2 focus:ring-sky-500"
     value={value}
     onChange={onChange}
-    onKeyDown={(e) => {
-      if (e.key === 'Backspace' && !value && onBackspace) {
-        onBackspace();
-      }
-    }}
+    onPaste={onPaste}
+    onKeyDown={(e) => onKeyDown(e, index, value)}
   />
 ));
 
@@ -26,14 +23,14 @@ const ResetPasswordPage = () => {
   const [message, setMessage] = useState('');
   const navigate = useNavigate();
   const location = useLocation();
-  
+
   const params = new URLSearchParams(location.search);
   const passedEmail = params.get('email') || '';
 
   const [otpDigits, setOtpDigits] = useState(['', '', '', '', '', '']);
   const inputRefs = useRef([]);
   inputRefs.current = Array.from({ length: 6 }, (_, i) => inputRefs.current[i] || React.createRef());
-  
+
   const passwordRef = useRef(null);
   const formContainerRef = useRef(null);
 
@@ -43,48 +40,111 @@ const ResetPasswordPage = () => {
     }
   }, []);
 
+  const focusNextEmpty = (newDigits) => {
+    const nextEmptyIndex = newDigits.findIndex(d => d === '');
+    if (nextEmptyIndex !== -1) {
+      inputRefs.current[nextEmptyIndex].current.focus();
+    } else {
+      // All filled, focus password field
+      passwordRef.current.focus();
+    }
+  };
+
+  const handleBackspaceOnEmpty = (index) => {
+    // Move focus to previous box and clear it if possible
+    if (index > 0) {
+      const newDigits = [...otpDigits];
+      newDigits[index - 1] = '';
+      setOtpDigits(newDigits);
+      inputRefs.current[index - 1].current.focus();
+    }
+  };
+
+  const handleBackspaceOnFilled = (index) => {
+    const newDigits = [...otpDigits];
+    newDigits[index] = ''; // Clear the current box
+    setOtpDigits(newDigits);
+    // Keep focus on this box so user can type a new number
+    inputRefs.current[index].current.focus();
+  };
+
+  const handleKeyDown = (e, index, value) => {
+    if (e.key === 'Backspace') {
+      e.preventDefault(); // Prevent default to avoid navigation
+      if (value) {
+        // There is a digit here, just clear this box
+        handleBackspaceOnFilled(index);
+      } else {
+        // Empty box, go to previous
+        handleBackspaceOnEmpty(index);
+      }
+    }
+  };
+
+  const handleSingleCharInput = (char) => {
+    // Find leftmost empty box
+    const newDigits = [...otpDigits];
+    const emptyIndex = newDigits.findIndex(d => d === '');
+
+    if (emptyIndex !== -1) {
+      newDigits[emptyIndex] = char;
+      setOtpDigits(newDigits);
+      focusNextEmpty(newDigits);
+    }
+    // If no empty box, ignore input
+  };
+
+  const handlePaste = (pastedValue) => {
+    // Only if all boxes are empty
+    if (otpDigits.every(d => d === '')) {
+      const cleaned = pastedValue.replace(/\D/g, '');
+      const newDigits = [...otpDigits];
+      for (let i = 0; i < Math.min(cleaned.length, 6); i++) {
+        newDigits[i] = cleaned[i];
+      }
+      setOtpDigits(newDigits);
+      focusNextEmpty(newDigits);
+    }
+  };
+
   const handleOTPChange = (index, e) => {
     const inputVal = e.target.value;
     const cleanedVal = inputVal.replace(/\D/g, ''); // only digits
 
     if (cleanedVal.length > 1) {
-      // Paste scenario
-      const newDigits = [...otpDigits];
-      let currentIndex = index;
-      for (let char of cleanedVal) {
-        if (currentIndex > 5) break;
-        newDigits[currentIndex] = char;
-        currentIndex++;
-      }
-      setOtpDigits(newDigits);
-
-      let nextEmptyIndex = newDigits.findIndex(d => d === '');
-      if (nextEmptyIndex === -1) {
-        // All filled, focus password
-        passwordRef.current.focus();
+      // Paste scenario from a single box
+      // If all empty, handle full paste
+      if (otpDigits.every(d => d === '')) {
+        handlePaste(cleanedVal);
       } else {
-        inputRefs.current[nextEmptyIndex].current.focus();
+        // If not all empty, just take the first char and fill normally
+        const firstChar = cleanedVal.charAt(0);
+        handleSingleCharInput(firstChar);
       }
+    } else if (cleanedVal.length === 1) {
+      // Single char typed
+      handleSingleCharInput(cleanedVal);
     } else {
-      // Single character scenario
-      const newDigits = [...otpDigits];
-      newDigits[index] = cleanedVal;
-      setOtpDigits(newDigits);
-
-      if (cleanedVal && index < 5) {
-        inputRefs.current[index + 1].current.focus();
-      } else if (index === 5 && cleanedVal) {
-        passwordRef.current.focus();
-      }
+      // No valid digit input, do nothing
     }
+
+    // Reset the input's displayed value since we're controlling the state
+    // and placing characters where we want them, not necessarily this box.
+    e.target.value = '';
   };
 
-  const handleBackspace = (index) => {
-    if (index > 0) {
-      inputRefs.current[index - 1].current.focus();
-      const newDigits = [...otpDigits];
-      newDigits[index - 1] = '';
-      setOtpDigits(newDigits);
+  const handleOTPBoxPaste = (index, e) => {
+    e.preventDefault();
+    const pastedData = e.clipboardData.getData('Text');
+    // If all empty and more than one char pasted, handle paste
+    if (otpDigits.every(d => d === '') && pastedData.length > 1) {
+      handlePaste(pastedData);
+    } else {
+      // Otherwise just take the first character and input it normally
+      const cleaned = pastedData.replace(/\D/g, '');
+      if (cleaned.length > 0) {
+        handleSingleCharInput(cleaned.charAt(0));
+      }
     }
   };
 
@@ -155,9 +215,11 @@ const ResetPasswordPage = () => {
           {otpDigits.map((digit, i) => (
             <OTPInput
               key={i}
+              index={i}
               value={digit}
               onChange={(e) => handleOTPChange(i, e)}
-              onBackspace={() => handleBackspace(i)}
+              onPaste={(e) => handleOTPBoxPaste(i, e)}
+              onKeyDown={handleKeyDown}
               ref={inputRefs.current[i]}
             />
           ))}

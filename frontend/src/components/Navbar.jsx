@@ -106,7 +106,7 @@ const Navbar = () => {
           )}
 
           {/* Vertical Divider */}
-          <div className="border-l border-gray-500 h-6"></div>
+          <div className="border-l rounded border-slate-600 h-6"></div>
 
           {/* GitHub Icon Link */}
           <a
