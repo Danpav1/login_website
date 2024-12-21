@@ -210,16 +210,14 @@ const ResetPasswordPage = () => {
       >
         <h2 className="text-3xl font-semibold text-center text-gray-100 mb-6">Reset Password</h2>
 
-        {message && (
-          <div className="text-green-500 text-center mb-6">
-            {message}
-          </div>
-        )}
-        {serverError && (
-          <div className="text-red-500 text-center mb-6">
-            {serverError}
-          </div>
-        )}
+        {/* Unified space for success and error messages */}
+        <div className="text-center mb-6 min-h-[1.5rem]">
+          {(message || serverError) && (
+            <span className={message ? 'text-green-500' : 'text-red-500'}>
+              {message || serverError}
+            </span>
+          )}
+        </div>
 
         <p className="text-center text-gray-100">
           Please enter the 6-digit OTP sent to <strong>{passedEmail}</strong>.

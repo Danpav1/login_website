@@ -76,7 +76,7 @@ const RegisterPage = () => {
     <div className="flex items-start justify-center min-h-screen bg-inherit pt-10 px-4">
       <div
         ref={formContainerRef}
-        className="w-full max-w-3xl bg-inherit p-12 rounded shadow-2xl mt-4 space-y-12 outline outline-indigo-900"
+        className="w-full max-w-3xl bg-inherit p-8 md:p-12 rounded shadow-2xl mt-4 space-y-12 outline outline-indigo-900"
       >
         <h2 className="text-4xl font-semibold text-center text-gray-100">Register</h2>
 
@@ -91,8 +91,8 @@ const RegisterPage = () => {
           onSubmit={onSubmit}
         >
           {({ isSubmitting }) => (
-            <Form className="space-y-12">
-              <div className="grid grid-cols-[1fr_auto_1fr] gap-12">
+            <Form className="space-y-8">
+              <div className="grid grid-cols-1 md:grid-cols-[1fr_auto_1fr] gap-12">
                 {/* Left Column: Name & Email */}
                 <div className="space-y-10">
                   {/* Name Field */}
@@ -104,7 +104,7 @@ const RegisterPage = () => {
                       type="text"
                       name="name"
                       id="name"
-                      className="p-2 w-full border rounded focus:outline-none focus:ring-2 focus:ring-sky-500 bg-slate-200 outline outline-slate-800"
+                      className={fieldClasses}
                     />
                     <div className="min-h-[1.25rem] mt-1">
                       <ErrorMessage
@@ -124,7 +124,7 @@ const RegisterPage = () => {
                       type="email"
                       name="email"
                       id="email"
-                      className="p-2 w-full border rounded focus:outline-none focus:ring-2 focus:ring-sky-500 bg-slate-200 outline outline-slate-800"
+                      className={fieldClasses}
                     />
                     <div className="min-h-[1.25rem] mt-1">
                       <ErrorMessage
@@ -136,8 +136,8 @@ const RegisterPage = () => {
                   </div>
                 </div>
 
-                {/* Divider - Centered with extra horizontal space */}
-                <div className="flex items-center justify-center">
+                {/* Divider - Hidden on Small Screens */}
+                <div className="hidden md:flex items-center justify-center">
                   <div className="border-l border-slate-600 shadow shadow-2xl mx-6 h-full"></div>
                 </div>
 
