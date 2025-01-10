@@ -20,3 +20,9 @@ A simple full-stack web application that allows users to register, log in, and v
 - **JWT (jsonwebtoken)**: JSON Web Tokens for authentication.
 - **bcryptjs**: Password hashing.
 - **dotenv**: Environment variable management.
+
+## How to use it
+- Ensure that you properly set up an .env file using the .env.example template. SMTP information will need to be updated as the template's information is just placeholder.
+- Navigate to the frontend dir, run "npm install" then "npm run dev". The ip shown will be the ip used to navigate to the site.
+- Navigage to the backend fir, run "npm isntall" then "npm start"
+- Have fun :)
