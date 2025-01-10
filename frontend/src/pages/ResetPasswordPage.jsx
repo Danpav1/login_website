@@ -206,7 +206,7 @@ const ResetPasswordPage = () => {
     <div className="flex items-start justify-center min-h-screen bg-inherit pt-10 px-4">
       <div
         ref={formContainerRef}
-        className="w-full max-w-md bg-inherit p-8 rounded shadow-2xl mt-4 space-y-8 outline outline-indigo-900"
+        className="w-full max-w-lg bg-inherit p-8 rounded shadow-2xl mt-4 space-y-8 outline outline-indigo-900" // Changed max-w-md to max-w-lg
       >
         <h2 className="text-3xl font-semibold text-center text-gray-100 mb-6">Reset Password</h2>
 
